@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { View } from 'react-native';
-
+import Geocoder from 'react-native-geocoding';
 import MapView, { Marker } from 'react-native-maps';
 import { getPixelSize } from '../../utils';
 
@@ -8,20 +8,35 @@ import Search from './Search';
 
 import markerImage from '../../assets/Marker';
 
-import { LocationBox, LocationText } from './styles';
+import {
+    LocationBox,
+    LocationText,
+    LocationTimeBox,
+    LocationTextSmall
+} from './styles';
+
+Geocoder.init('AIzaSyDzIT-_ecrBGxzByiAUow5osX_T1S__G34');
 
 export default class Map extends Component {
     state = {
         region: null,
         destination: null,
+        duration: null,
+        location: null,
     };
 
     // render component in screen
     async componentDidMount() {
         // callback situation
         navigator.geolocation.getCurrentPosition(
-            ({ coords: { latitude, longitude } }) => {
+            async ({ coords: { latitude, longitude } }) => {
+                // get current location with geocoding package
+                const response = await Geocoder.from({ latitude, longitude });
+                const address = response.results[0].formatted_address;
+                const location = address.substring(0, address.indexOf(','));
+
                 this.setState({
+                    location,
                     region: {
                         latitude,
                         longitude,
@@ -51,7 +66,7 @@ export default class Map extends Component {
     }
 
     render() {
-        const { region, destination } = this.state;
+        const { region, destination, duration, location } = this.state;
 
         return (
             <View stype={{ flex: 1 }}>
@@ -67,13 +82,15 @@ export default class Map extends Component {
                             <Directions
                                 origin={region}
                                 destination={destination}
+                                // result of api map google
                                 onReady={result => {
+                                    this.setState({ duration: Math.floor(result.duration) })
                                     this.mapView.fitToCoordinates(result.coordinates, {
                                         edgePadding: {
                                             right: getPixelSize(50),
                                             left: getPixelSize(50),
                                             top: getPixelSize(50),
-                                            bottom: getPixelSize(50),
+                                            bottom: getPixelSize(350),
                                         }
                                     });
                                 }}
@@ -87,10 +104,27 @@ export default class Map extends Component {
                                     <LocationText>{destination.title}</LocationText>
                                 </LocationBox>
                             </Marker>
+
+                            <Marker
+                                coordinate={region}
+                                anchor={{ x: 0, y: 0 }}
+                            >
+                                <LocationBox>
+                                    <LocationTimeBox>
+                                        <LocationText>{duration}</LocationText>
+                                        <LocationTextSmall>MIN</LocationTextSmall>
+                                    </LocationTimeBox>
+                                    <LocationText>{location}</LocationText>
+                                </LocationBox>
+                            </Marker>
                         </Fragment>
                     )}
                 </ MapView>
-                <Search onLocationSelected={this.handleLocationSelected} />
+                    { destination ? (
+                        <Details />
+                    ) : (
+                        <Search onLocationSelected={this.handleLocationSelected} />
+                     )}
             </ View>
 
         )
