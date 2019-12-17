@@ -8,6 +8,8 @@ import Search from './Search';
 
 import markerImage from '../../assets/Marker';
 
+import { LocationBox, LocationText } from './styles';
+
 export default class Map extends Component {
     state = {
         region: null,
@@ -80,7 +82,11 @@ export default class Map extends Component {
                                 coordinate={destination}
                                 anchor={{ x: 0, y: 0 }}
                                 image={markerImage}
-                            />
+                            >
+                                <LocationBox>
+                                    <LocationText>{destination.title}</LocationText>
+                                </LocationBox>
+                            </Marker>
                         </Fragment>
                     )}
                 </ MapView>
