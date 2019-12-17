@@ -3,7 +3,12 @@ import { Platform } from 'react-native';
 import { GooglePlacesAutoComplete } from 'react-native-google-places-autocomplete';
 
 export default class Search extends Component {
+    state = {
+        searchFocused: false,
+    }
+
     render() {
+        const { searchFocused } = this.state;
         const { onLocationSelected } = this.props;
 
         return <GooglePlacesAutoComplete
@@ -15,9 +20,12 @@ export default class Search extends Component {
                 language: 'pt'
             }}
             textInputProps={{
+                onFocus: () => { this.setState({ searchFocused: true }) },
+                onBlur: () => { this.setState({ searchFocused: false }) },
                 autoCapitalize: "none", // do not use uppercase
                 autoCorret: false
             }}
+            listViewDisplayed={searchFocused}
             fetchDetails
             enablePoweredByContainer={false} // remove logo from footer
             styles={{
