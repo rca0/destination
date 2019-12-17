@@ -7,7 +7,8 @@ import Search from './Search';
 
 export default class Map extends Component {
     state = {
-        region: null
+        region: null,
+        destination: null,
     };
 
     // render component in screen
@@ -33,8 +34,19 @@ export default class Map extends Component {
         )
     }
 
+    handleLocationSelected = (data, { geometry }) => {
+        const { location: { lat: latitude, lng: longitude } } = geometry;
+        this.setState({
+            destination: {
+                latitude,
+                longitude,
+                title: data.structured_formatting.main_text,
+            }
+        })
+    }
+
     render() {
-        const { region } = this.state;
+        const { region, destination } = this.state;
 
         return (
             <View stype={{ flex: 1 }}>
@@ -42,8 +54,19 @@ export default class Map extends Component {
                     stype={{ flex: 1 }}
                     region={region}
                     showsUserLocation
-                    loadingEnabled />
-                <Search />
+                    loadingEnabled
+                >
+                    {destination && (
+                        <Directions
+                            origin={region}
+                            destination={destination}
+                            onReady={() => {
+
+                            }}
+                        />
+                    )}
+                </ MapView>
+                <Search onLocationSelected={this.handleLocationSelected} />
             </ View>
 
         )
