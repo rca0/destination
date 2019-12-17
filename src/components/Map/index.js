@@ -35,14 +35,13 @@ export default class Map extends Component {
         const { region } = this.state;
 
         return (
-        <View stype={{ flex: 1 }}>
-            <MapView
-                stype={{ flex: 1 }}
-                region={region}
-                showsUserLocation
-                loadingEnabled
-            />
-        </ View>
+            <View stype={{ flex: 1 }}>
+                <MapView
+                    stype={{ flex: 1 }}
+                    region={region}
+                    showsUserLocation
+                    loadingEnabled />
+            </ View>
         )
     }
 }
