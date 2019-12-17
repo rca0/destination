@@ -1,12 +1,13 @@
 import React, { Component, Fragment } from 'react';
-import { View } from 'react-native';
+import { View, Image } from 'react-native';
 import Geocoder from 'react-native-geocoding';
 import MapView, { Marker } from 'react-native-maps';
 import { getPixelSize } from '../../utils';
 
 import Search from './Search';
 
-import markerImage from '../../assets/Marker';
+import markerImage from '../../assets/marker.png';
+import backImage from '../../assets/back.png';
 
 import {
     LocationBox,
@@ -65,6 +66,10 @@ export default class Map extends Component {
         })
     }
 
+    handleBack = () => {
+        this.setState({ destination: null });
+    };
+
     render() {
         const { region, destination, duration, location } = this.state;
 
@@ -121,7 +126,12 @@ export default class Map extends Component {
                     )}
                 </ MapView>
                     { destination ? (
-                        <Details />
+                        <frameElement>
+                            <Back onPress={this.handleBack}>
+                                <Image source={backImage} />
+                            </Back>
+                            <Details />
+                        </frameElement>
                     ) : (
                         <Search onLocationSelected={this.handleLocationSelected} />
                      )}
