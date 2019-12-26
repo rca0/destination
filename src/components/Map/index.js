@@ -4,7 +4,7 @@ import Geocoder from 'react-native-geocoding';
 import MapView, { Marker } from 'react-native-maps';
 import { getPixelSize } from '../../utils';
 
-import Search from './Search';
+import Search from '../Search';
 
 import markerImage from '../../assets/marker.png';
 import backImage from '../../assets/back.png';
